@@ -9,8 +9,6 @@ import com.inf5d6.tp1.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
-
 class HomeViewModel(app: Application) : AndroidViewModel(app) {
     val listePokemons = MutableLiveData<Array<Pokemon>>()
 
