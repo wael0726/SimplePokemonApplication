@@ -8,74 +8,54 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import okhttp3.*
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import org.json.JSONObject
-import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
+    private lateinit var email: EditText
+    private lateinit var password: EditText
     private lateinit var loginButton: Button
-    private val TAG = "LoginActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Initialisation des vues
-        emailEditText = findViewById(R.id.EmailAddress)
-        passwordEditText = findViewById(R.id.Password)
+        email = findViewById(R.id.EmailAddress)
+        password = findViewById(R.id.Password)
         loginButton = findViewById(R.id.LoginButton)
 
         loginButton.setOnClickListener {
-            authenticateUser(emailEditText.text.toString(), passwordEditText.text.toString())
+            authentication(email.text.toString(), password.text.toString())
         }
     }
 
-    private fun authenticateUser(email: String, password: String) {
-        val client = OkHttpClient()
-        val url = "${MainActivity.SRVURL}/auth/token" // Utilisation de l'URL de l'API
+    private fun authentication(email: String, password: String) {
+        val url = "https://pokemonsapi.herokuapp.com/auth/token"
+        val queue: RequestQueue = Volley.newRequestQueue(this)
 
-        val jsonObject = JSONObject().apply {
+        val body = JSONObject().apply {
             put("email", email)
             put("password", password)
         }
 
-        val body = RequestBody.create(MediaType.parse("application/json"), jsonObject.toString())
-
-        val request = Request.Builder()
-            .url(url)
-            .post(body)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e(TAG, "Erreur de réseau", e)
-                runOnUiThread {
-                    Toast.makeText(this@LoginActivity, "Erreur de connexion", Toast.LENGTH_SHORT).show()
-                }
+        val postRequest = JsonObjectRequest(
+            Request.Method.POST,
+            url,
+            body,
+            { response ->
+                val token = response.getString("token")
+                MainActivity.TOKEN = token
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                finish()
+            },
+            { error ->
+                Log.d("Error.Response", error.message.toString())
             }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val responseData = response.body()?.string()
-                    responseData?.let {
-                        val jsonResponse = JSONObject(it)
-                        val token = jsonResponse.getString("token") // Assurez-vous que votre API renvoie un champ "token"
-                        MainActivity.TOKEN = token // Stockez le jeton dans la variable globale
-                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                        finish()
-                    }
-                } else {
-                    // Gestion de l'erreur si le code n'est pas 200
-                    val errorResponse = response.body()?.string()
-                    runOnUiThread {
-                        Toast.makeText(this@LoginActivity, "Erreur d'authentification: $errorResponse", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        })
+        )
+        queue.add(postRequest)
     }
 }
