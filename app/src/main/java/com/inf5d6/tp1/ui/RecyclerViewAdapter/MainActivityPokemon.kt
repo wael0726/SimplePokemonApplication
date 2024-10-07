@@ -11,10 +11,10 @@ class MainActivityPokemon : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_home)
         val mainActivityViewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
-        mainActivityViewModel.listePokemons.observe(this){
+        mainActivityViewModel.listePokemons.observe(this) {
             val rvPokemon = findViewById<RecyclerView>(R.id.rvPokemon)
             rvPokemon.adapter = ListePokemonRecyclerViewAdapter(it)
-            rvPokemon.layoutManager = GridLayoutManager(this,2)
+            rvPokemon.layoutManager = GridLayoutManager(this, 2)
         }
     }
 }

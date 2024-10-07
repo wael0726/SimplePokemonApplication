@@ -5,6 +5,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
+import com.inf5d6.tp1.dataclasses.DetailsPokemon
 
 class Repository(val app: Application) {
     fun getPokemons(listePokemon : MutableLiveData<Array<Pokemon>>) {

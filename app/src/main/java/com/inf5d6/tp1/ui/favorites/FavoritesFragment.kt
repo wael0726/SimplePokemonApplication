@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.inf5d6.tp1.R
 
 class FavoritesFragment : Fragment() {
@@ -23,7 +25,16 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val favoritesViewModel = ViewModelProvider(this)[FavoritesViewModel::class.java]
 
-        // Voir le Module 09 - Fragments pour voir comment accèder aux contrôles d'un Fragment
-        // view.findViewById<TYPE>(R.id.ID)
+        val rvFavoris = view.findViewById<RecyclerView>(R.id.rvFavoris)
+        rvFavoris.layoutManager = GridLayoutManager(context, 2)
+
+        favoritesViewModel.listePokemonFav.observe(viewLifecycleOwner) { listePokemonFav ->
+            rvFavoris.adapter = FavoriteRecycleViewAdapter(listePokemonFav)
+        }
+        parentFragmentManager.setFragmentResultListener("updateFavorites", this) { requestKey, _ ->
+            favoritesViewModel.loadFavorites()
+        }
+
+        favoritesViewModel.loadFavorites()
     }
 }
