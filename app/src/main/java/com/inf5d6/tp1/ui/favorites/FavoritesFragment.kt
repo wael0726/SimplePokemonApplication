@@ -20,7 +20,6 @@ class FavoritesFragment : Fragment() {
         val v = LayoutInflater.from(context).inflate(R.layout.fragment_favorites, container, false)
         return v
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val favoritesViewModel = ViewModelProvider(this)[FavoritesViewModel::class.java]
