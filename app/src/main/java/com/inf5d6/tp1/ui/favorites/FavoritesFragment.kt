@@ -24,10 +24,8 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val favoritesViewModel = ViewModelProvider(this)[FavoritesViewModel::class.java]
-
         val rvFavoris = view.findViewById<RecyclerView>(R.id.rvFavoris)
         rvFavoris.layoutManager = GridLayoutManager(context, 2)
-
         favoritesViewModel.listePokemonFav.observe(viewLifecycleOwner) { listePokemonFav ->
             rvFavoris.adapter = FavoriteRecycleViewAdapter(listePokemonFav)
         }

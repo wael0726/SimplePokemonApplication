@@ -60,40 +60,31 @@ class DetailsFragment : Fragment() {
         view?.findViewById<TextView>(R.id.habitat)?.text = "Habitat: ${pokemonDetails.habitat.name}"
         view?.findViewById<TextView>(R.id.species)?.text = "Species: ${pokemonDetails.species.name}"
         view?.findViewById<TextView>(R.id.poketype)?.text = "Poketypes: ${pokemonDetails.poketypes.joinToString(", ") { it.name }}"
-
-        // Récupération des évolutions
         val evolutionsList = mutableListOf<DetailsPokemon>()
         var currentEvolution: DetailsPokemon? = pokemonDetails.evolution
-
-        // Ajout des évolutions à la liste
         while (currentEvolution != null) {
             evolutionsList.add(currentEvolution)
             currentEvolution = currentEvolution.evolution
         }
-
-        // Affichage des images d'évolution dans imgEvo1 et imgEvo2
         val imgEvo1 = view?.findViewById<ImageView>(R.id.ImgEvo1)
         val imgEvo2 = view?.findViewById<ImageView>(R.id.ImgEvo2)
-
         if (evolutionsList.size > 0) {
-            Picasso.get().load(evolutionsList[0].imgURL).into(imgEvo1) // Première évolution
+            Picasso.get().load(evolutionsList[0].imgURL).into(imgEvo1)
             imgEvo1?.setOnClickListener {
-                navigateToDetails(evolutionsList[0].pokemonId) // Navigation vers la première évolution
+                navigateToDetails(evolutionsList[0].pokemonId)
             }
-
             if (evolutionsList.size > 1) {
-                Picasso.get().load(evolutionsList[1].imgURL).into(imgEvo2) // Deuxième évolution
+                Picasso.get().load(evolutionsList[1].imgURL).into(imgEvo2)
                 imgEvo2?.setOnClickListener {
-                    navigateToDetails(evolutionsList[1].pokemonId) // Navigation vers la deuxième évolution
+                    navigateToDetails(evolutionsList[1].pokemonId)
                 }
             } else {
-                imgEvo2?.visibility = View.GONE // Cacher si pas de deuxième évolution
+                imgEvo2?.visibility = View.GONE
             }
         } else {
-            imgEvo1?.visibility = View.GONE // Cacher si pas d'évolution
-            imgEvo2?.visibility = View.GONE // Cacher si pas d'évolution
+            imgEvo1?.visibility = View.GONE
+            imgEvo2?.visibility = View.GONE
         }
-
         checkFavorite(pokemonDetails.pokemonId)
     }
 
@@ -130,7 +121,6 @@ class DetailsFragment : Fragment() {
     private fun checkFavorite(pokemonId: Int) {
         val url = "https://pokemonsapi.herokuapp.com/favorite?pokemonId=$pokemonId"
         val queue = Volley.newRequestQueue(requireContext())
-
         val stringRequest = object : StringRequest(
             Request.Method.GET,
             url,
@@ -161,7 +151,7 @@ class DetailsFragment : Fragment() {
         val btnFavorite = view?.findViewById<Button>(R.id.FavorisButton)
         if (isFavorite) {
             btnFavorite?.text = "Supprimer des favoris"
-            btnFavorite?.setBackgroundColor(Color.parseColor("#FF0000")) // Mettre en rouge
+            btnFavorite?.setBackgroundColor(Color.parseColor("#FF0000"))
         } else {
             btnFavorite?.text = "Ajouter aux favoris"
         }
@@ -194,7 +184,6 @@ class DetailsFragment : Fragment() {
     private fun removeFromFavorites(pokemonId: Int) {
         val url = "https://pokemonsapi.herokuapp.com/favorite?pokemonId=$pokemonId"
         val queue = Volley.newRequestQueue(requireContext())
-
         val stringRequest = object : StringRequest(
             Request.Method.DELETE,
             url,
